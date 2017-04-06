@@ -1,0 +1,29 @@
+{
+  "name": "strava-live-segments",
+  "version": "1.0.0",
+  "description": "Lookup starred strava segments and match to the user's current location",
+  "homepage": "https://github.com/Ogadai/strava-live-segments",
+  "repository": "https://github.com/Ogadai/strava-live-segments.git",
+  "author": "Andy Lee <andy.lee.surfer@gmail.com> (https://github.com/Ogadai)",
+  "contributors": [
+    "Andy Lee <andy.lee.surfer@gmail.com>"
+  ],
+  "license": "MIT",
+  "keywords": [],
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "engines": {
+    "node": ">=7.0.0"
+  },
+  "dependencies": {
+    "axios": "^0.15.3",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.15.2",
+    "node-cache": "^4.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
+}
