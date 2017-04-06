@@ -25,20 +25,21 @@ class Tracker {
         return this._athlete.segments()
     }
 
-    effort(segment) {
+    effort(segmentId) {
+        return this._athlete.effort(segmentId)
+    }
+
+    segmentWithEffort(segment) {
         return this._athlete.effort(segment.id)
             .then(effort => Object.assign({}, segment, { positions: effort }))
     }
 
     active(point) {
-        return this.getNearbySegments(point)
-    }
-
-    getNearbySegments(point) {
         return this.segments().then(segments => {
             const nearBy = segments.filter(s => this.isPointInRegion(point, s.start))
-            return Promise.all(nearBy.map(s => this.effort(s)))
+            return Promise.all(nearBy.map(s => this.segmentWithEffort(s)))
                     .then(close => close.filter(s => this.isOnSegment(point, s)))
+                    .then(current => current.map(s => ({ id: s.id, name: s.name, start: s.start, end: s.end })))
         })
     }
 
