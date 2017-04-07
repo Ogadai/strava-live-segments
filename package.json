@@ -1,6 +1,6 @@
 {
   "name": "strava-live-segments",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Lookup starred strava segments and match to the user's current location",
   "homepage": "https://github.com/Ogadai/strava-live-segments",
   "repository": "https://github.com/Ogadai/strava-live-segments.git",
