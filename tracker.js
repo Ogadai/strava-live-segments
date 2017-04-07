@@ -109,21 +109,26 @@ class Tracker {
     setupSegmentPromise(point, segment) {
         return this.segmentWithEffort(segment)
             .then(s => {
-                const crossing = this.getPointCrossing(point, segment.start)
-                
-                return Object.assign({}, s, {
-                    inProgress: true,
-                    startTime: crossing.time,
-                    lastIndex: 0,
-                    lastIndexTime: crossing.time
-                })
+                if (segment.positions && segment.positions.length > 2) {
+                    const crossing = this.getPointCrossing(point, segment.start)
+                    
+                    return Object.assign({}, s, {
+                        inProgress: true,
+                        startTime: crossing.time,
+                        lastIndex: 0,
+                        lastIndexTime: crossing.time
+                    })
+                } else {
+                    // No effort for this segment
+                    return segment
+                }
             })
     }
 
     setSegmentStatus(point, segment) {
-        if (segment.finished) return
-
         const points = segment.positions
+        if (segment.finished || !points || points.length < 2) return
+
         let index = Math.min(segment.lastIndex + 1, points.length - 1)
 
         const distFn = index => this.distance(point, points[index])
