@@ -109,8 +109,8 @@ class Tracker {
     setupSegmentPromise(point, segment) {
         return this.segmentWithEffort(segment)
             .then(s => {
-                if (segment.positions && segment.positions.length > 2) {
-                    const crossing = this.getPointCrossing(point, segment.start)
+                if (s.positions && s.positions.length > 2) {
+                    const crossing = this.getPointCrossing(point, s.start)
                     
                     return Object.assign({}, s, {
                         inProgress: true,
