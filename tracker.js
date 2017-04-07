@@ -73,8 +73,7 @@ class Tracker {
     }
 
     isNearStart(point, segment) {
-        if (this.lastPoint && point
-                && !this.current.find(s => s.id === segment.id)) {
+        if (this.lastPoint && point) {
             return this.isPointClose(point, segment.start)
         }
         return false
