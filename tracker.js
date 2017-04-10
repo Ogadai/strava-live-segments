@@ -183,10 +183,7 @@ class Tracker {
 
         const previous = points[index - 1];
         if (index === points.length) {
-            segment.pr = {
-                x: previous.x,
-                y: previous.y
-            };
+            segment.pr = null;
         } else {
             const next = points[index];
             const pointTime = elapsed - previous.time * 1000;
