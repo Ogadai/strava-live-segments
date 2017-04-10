@@ -30,8 +30,7 @@ class Athlete {
         return cache.get({
             key: `starred-${this.token}`,
             createFn: () => request.get(this.token, '/api/v3/segments/starred?per_page=200')
-                        .then(segments => segments.filter(this.filterStarred)
-                                .map(s => this.mapSegment(s)))
+                        .then(segments => segments.filter(this.filterStarred))
         })
     }
 
@@ -43,7 +42,7 @@ class Athlete {
                         segments.push(segment)
                     }
                 })
-                return segments
+                return segments.map(s => this.mapSegment(s))
             })
         )
     }
@@ -67,7 +66,6 @@ class Athlete {
             key: `segment-${id}`,
             keepAlive: true,
             createFn: () => request.get(this.token, `api/v3/segments/${id}`)
-                    .then(s => this.mapSegment(s))
         })
     }
 
