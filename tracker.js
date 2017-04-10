@@ -126,6 +126,8 @@ class Tracker {
     }
 
     setSegmentStatus(point, segment) {
+        this.setSegmentPRPosition(segment);
+
         const points = segment.positions
         if (segment.finished || !points || points.length < 2) return
 
@@ -169,6 +171,34 @@ class Tracker {
         }
     }
 
+    setSegmentPRPosition(segment) {
+        const points = segment.positions
+        if (!points || points.length < 2 || !segment.startTime) return
+
+        const elapsed = dateNow() - segment.startTime;
+        let index = 0;
+        while(index < points.length && points[index].time * 1000 < elapsed) {
+            index++;
+        }
+
+        const previous = points[index - 1];
+        if (index === points.length) {
+            segment.pr = {
+                x: previous.x,
+                y: previous.y
+            };
+        } else {
+            const next = points[index];
+            const pointTime = elapsed - previous.time * 1000;
+            const ratio = pointTime / ((next.time - previous.time) * 1000);
+
+            segment.pr = {
+                x: previous.x + (next.x - previous.x) * ratio,
+                y: previous.y + (next.y - previous.y) * ratio
+            };
+        }
+    }
+
     shouldRemove(segment) {
         return !(segment.inProgress
                 || (segment.finished && dateNow() - segment.finishTime < 5000))
@@ -196,7 +226,8 @@ function toJson(s) {
         startTime: s.startTime,
         endTime: s.endTime,
         finished: s.finished,
-        difference: s.difference
+        difference: s.difference,
+        pr: s.pr
     }
 }
 

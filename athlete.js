@@ -29,7 +29,7 @@ class Athlete {
     starred() {
         return cache.get({
             key: `starred-${this.token}`,
-            createFn: () => request.get(this.token, '/api/v3/segments/starred')
+            createFn: () => request.get(this.token, '/api/v3/segments/starred?per_page=200')
                         .then(segments => segments.filter(this.filterStarred)
                                 .map(s => this.mapSegment(s)))
         })
