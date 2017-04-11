@@ -40,6 +40,8 @@ class Tracker {
 
     active(point) {
         return this.segments().then(segments => {
+            if (!point) return []
+            
             const nearStartSegments = segments
                 .filter(s => this.isPointInRegion(point, s.start))
                 .filter(s => this.isNearStart(point, s))
