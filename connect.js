@@ -9,7 +9,10 @@ function connect({ clientId, clientSecret, afterUrl }) {
     app.get('/connect', function(req, res) {
         const thisUrl = `http://${req.headers.host}${req.originalUrl}`
         const tokenUrl = `${thisUrl.substring(0, thisUrl.lastIndexOf('/'))}/token`
-        res.redirect(`${baseURL}/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=${tokenUrl}`)
+
+        const authUrl = `${baseURL}/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=${tokenUrl}`
+
+        respondUrl(req, res, authUrl)
     })
 
     app.get('/disconnect', function(req, res) {
@@ -22,10 +25,11 @@ function connect({ clientId, clientSecret, afterUrl }) {
                 }
             }).then(response => {
                 res.cookie('stravaToken', '', { path: '/', httpOnly: true })
-                res.redirect(afterUrl)
+
+                respondUrl(req, res, afterUrl)
             }).catch(responseError(res))
         } else {
-            res.redirect(afterUrl)
+            respondUrl(req, res, afterUrl)
         }
     })
 
@@ -67,6 +71,22 @@ function responseError(res) {
       res.status(500).send(JSON.stringify(err));
     }
   }
+}
+
+function respondUrl(req, res, url) {
+    if (isJson(req)) {
+        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8888');
+        res.setHeader('Access-Control-Allow-Methods', 'GET');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        res.setHeader('Access-Control-Allow-Credentials', true);
+        res.send({ url });
+    } else {
+        res.redirect(url)
+    }
+}
+
+function isJson(req) {
+    return req.get('Accept').indexOf('application/json') !== -1
 }
 
 module.exports = connect
