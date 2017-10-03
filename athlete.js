@@ -35,7 +35,7 @@ class Athlete {
     }
 
     segments() {
-        return this.starred().then(starred => 
+        return this.starred().then(starred =>
             this.defaultSegments().then(segments => {
                 starred.forEach(segment => {
                     if (!segments.find(s => s.id === segment.id)) {
@@ -49,7 +49,7 @@ class Athlete {
 
     effort(segmentId) {
         return this.athlete().then(athlete => {
-            return segment.get(this.token, athlete.id, segmentId).map(this.mapFn)
+            return segment.get(this.token, athlete.id, segmentId, this.config.startDate).map(this.mapFn)
         })
     }
 

@@ -56,11 +56,31 @@ function connect({ clientId, clientSecret, afterUrl }) {
         }).catch(responseError(res))
     })
 
+    app.get('/settings', function(req, res) {
+        sendJson(res, connect.getSettings(req));
+    })
+
+    app.options('/settings', respondCORS)
+    app.post('/settings', function(req, res) {
+        const { startDate, startAge } = req.body
+        const settingsCookie = JSON.stringify({ startDate, startAge })
+        res.cookie('stravaSettings', settingsCookie, { path: '/', httpOnly: true })
+        sendJson(res, {});
+    })
+
     return app
 }
 
 connect.getToken = function getToken(req) {
     return req.cookies.stravaToken
+}
+
+
+connect.getSettings = function getSettings(req) {
+    const settingsCookie = req.cookies.stravaSettings
+    return settingsCookie ?
+            JSON.parse(settingsCookie)
+            : {};
 }
 
 function responseError(res) {
@@ -87,6 +107,22 @@ function respondUrl(req, res, url) {
 
 function isJson(req) {
     return req.get('Accept').indexOf('application/json') !== -1
+}
+
+function respondCORS(req, res) {
+  sendJson(res, {});
+}
+
+function sendJson(res, data) {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8888');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Cache-Control', 'nocache');
+  res.setHeader('Last-Modified', (new Date()).toUTCString());
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", 0);
+  res.send(data);
 }
 
 module.exports = connect

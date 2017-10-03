@@ -3,23 +3,30 @@ const Cache = require('./cache')
 
 const cache = new Cache()
 
-function get(token, athleteId, segmentId) {
+function get(token, athleteId, segmentId, startDate) {
     return cache.get({
-        key: `athlete-${athleteId}-segment-${segmentId}`,
-        createFn: () => new Segment(token, athleteId, segmentId)
+        key: `athlete-${athleteId}-segment-${segmentId}-${startDate}`,
+        createFn: () => new Segment(token, athleteId, segmentId, startDate)
     })
 }
 
 class Segment {
-    constructor(token, athleteId, segmentId) {
+    constructor(token, athleteId, segmentId, startDate) {
         this.token = token
         this.athleteId = athleteId
         this.segmentId = segmentId
+        this.startDate = startDate
     }
 
     effort() {
         if (!this.effortPromise) {
-            this.effortPromise = request.get(this.token, `/api/v3/segments/${this.segmentId}/all_efforts?athlete_id=${this.athleteId}&per_page=1`)
+            const search = {
+                athlete_id: this.athleteId,
+                per_page: 1,
+                start_date_local: this.startDate,
+                end_date_local: this.startDate ? (new Date()).toISOString() : undefined
+            };
+            this.effortPromise = request.get(this.token, `/api/v3/segments/${this.segmentId}/all_efforts`, search)
                     .then(efforts => efforts.length > 0 ? efforts[0] : null)
         }
         return this.effortPromise
@@ -28,6 +35,9 @@ class Segment {
     stream() {
         if (!this.streamPromise) {
             this.streamPromise = this.effort().then(effort => {
+if (effort){
+    console.log(`effort started: ${effort.start_date}`);
+}
                 return effort
                         ? request.get(this.token, `/api/v3/segment_efforts/${effort.id}/streams/latlng?series_type=time&resolution=medium`)
                         : Promise.resolve(null)
@@ -40,7 +50,7 @@ class Segment {
         return this.stream().then(stream => {
             const latLngData = stream ? stream.find(s => s.type === 'latlng') : null;
             const timeData = stream ? stream.find(s => s.type === 'time') : null;
-            
+
             if (latLngData && timeData) {
                 const firstTime = timeData.data[0]
                 return latLngData.data.map((latLng, i) => {

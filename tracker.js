@@ -41,7 +41,7 @@ class Tracker {
     active(point) {
         return this.segments().then(segments => {
             if (!point) return []
-            
+
             const nearStartSegments = segments
                 .filter(s => this.isPointInRegion(point, s.start))
                 .filter(s => this.isNearStart(point, s))
@@ -83,7 +83,7 @@ class Tracker {
 
     isCrossingStartPoint(point, segment) {
         const crossing = this.getPointCrossing(point, segment.start)
-        return (crossing && this.distance(crossing.point, segment.start) < 1000)
+        return (crossing && this.distance(crossing.point, segment.start) < 2000)
     }
 
     getPointCrossing(point, endPoint) {
@@ -113,7 +113,7 @@ class Tracker {
             .then(s => {
                 if (s.positions && s.positions.length > 2) {
                     const crossing = this.getPointCrossing(point, s.start)
-                    
+
                     return Object.assign({}, s, {
                         inProgress: true,
                         startTime: crossing.time,
@@ -162,12 +162,12 @@ class Tracker {
         if (crossing) {
             segment.lastIndex = index
             segment.lastIndexTime = crossing.time
-            
+
             let timeToPoint = segment.lastIndexTime - segment.startTime
 
             segment.difference = timeToPoint / 1000 - points[index].time
         } else {
-            if (distFn(index) > 20000) {
+            if (distFn(index) > 30000) {
                 segment.inProgress = false
             }
         }
@@ -193,7 +193,8 @@ class Tracker {
 
             segment.pr = {
                 x: previous.x + (next.x - previous.x) * ratio,
-                y: previous.y + (next.y - previous.y) * ratio
+                y: previous.y + (next.y - previous.y) * ratio,
+                time: points[points.length-1].time
             };
         }
     }
@@ -222,12 +223,16 @@ function toJson(s) {
         name: s.name,
         start: s.start,
         end: s.end,
-        startTime: s.startTime,
-        endTime: s.endTime,
+        startTime: toISOTime(s.startTime),
+        endTime: toISOTime(s.endTime),
         finished: s.finished,
         difference: s.difference,
         pr: s.pr
     }
+}
+
+function toISOTime(time) {
+    return time ? (new Date(time)).toISOString() : undefined;
 }
 
 module.exports = {
