@@ -35,9 +35,6 @@ class Segment {
     stream() {
         if (!this.streamPromise) {
             this.streamPromise = this.effort().then(effort => {
-if (effort){
-    console.log(`effort started: ${effort.start_date}`);
-}
                 return effort
                         ? request.get(this.token, `/api/v3/segment_efforts/${effort.id}/streams/latlng?series_type=time&resolution=medium`)
                         : Promise.resolve(null)
