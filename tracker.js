@@ -176,6 +176,9 @@ class Tracker {
     setSegmentPRPosition(segment) {
         const points = segment.positions
         if (!points || points.length < 2 || !segment.startTime) return
+        segment.pr = {
+            time: points[points.length-1].time
+        };
 
         const elapsed = dateNow() - segment.startTime;
         let index = 0;
@@ -184,18 +187,13 @@ class Tracker {
         }
 
         const previous = points[index - 1];
-        if (index === points.length) {
-            segment.pr = null;
-        } else {
+        if (index < points.length) {
             const next = points[index];
             const pointTime = elapsed - previous.time * 1000;
             const ratio = pointTime / ((next.time - previous.time) * 1000);
 
-            segment.pr = {
-                x: previous.x + (next.x - previous.x) * ratio,
-                y: previous.y + (next.y - previous.y) * ratio,
-                time: points[points.length-1].time
-            };
+            segment.pr.x = previous.x + (next.x - previous.x) * ratio;
+            segment.pr.y = previous.y + (next.y - previous.y) * ratio;
         }
     }
 
