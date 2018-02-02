@@ -136,10 +136,23 @@ class Tracker {
         let index = Math.min(segment.lastIndex + 1, points.length - 1)
 
         const distFn = index => this.distance(point, points[index])
-        // Look along for the nearest point
-        while(index < points.length - 1
-                && distFn(index + 1) < distFn(index)) {
-            index++
+        const nextNearest = index => {
+            const nearest = { index: index, dist: distFn(index) }
+            for(var n = index; n < index + 5; n++) {
+                if ( n < points.length) {
+                    const dist = distFn(n)
+                    if (dist < nearest.dist) {
+                        nearest.index = n
+                        nearest.dist = dist
+                    }
+                }
+            }
+            return nearest.index
+        }
+        let next = nextNearest(index)
+        while(next > index) {
+            index = next
+            next = nextNearest(index)
         }
 
         if (distFn(index - 1) < this.distance(points[index - 1], points[index])) {
