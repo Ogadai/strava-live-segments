@@ -53,6 +53,12 @@ class Athlete {
         })
     }
 
+    route(segmentId) {
+        return this.athlete().then(athlete => {
+            return segment.get(this.token, athlete.id, segmentId, this.config.startDate).mapRoute(this.mapFn)
+        })
+    }
+
     defaultSegments() {
         if (this.config && this.config.segments) {
             return Promise.all(this.config.segments.map(id => this.loadSegment(id)))

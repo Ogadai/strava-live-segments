@@ -61,7 +61,26 @@ class Segment {
         })
     }
 
+    route() {
+        if (!this.routePromise) {
+            this.routePromise = request.get(this.token, `/api/v3/segments/${this.segmentId}/streams/latlng?series_type=time&resolution=high`)
+        }
+        return this.routePromise
+    }
 
+    mapRoute(mapFn) {
+        return this.route().then(stream => {
+            const latLngData = stream ? stream.find(s => s.type === 'latlng') : null;
+
+            if (latLngData) {
+                return latLngData.data.map(latLng => {
+                    return mapFn({ lat: latLng[0], lng: latLng[1] })
+                })
+            } else {
+                return null
+            }
+        })
+    }
 }
 
 module.exports = {

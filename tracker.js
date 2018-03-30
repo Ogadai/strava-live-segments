@@ -33,6 +33,10 @@ class Tracker {
         return this._athlete.effort(segmentId)
     }
 
+    route(segmentId) {
+        return this._athlete.route(segmentId)
+    }
+
     segmentWithEffort(segment) {
         return this._athlete.effort(segment.id)
             .then(effort => Object.assign({}, segment, { positions: effort }))
