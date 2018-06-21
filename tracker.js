@@ -25,6 +25,14 @@ class Tracker {
         return this._athlete.athlete()
     }
 
+    activities() {
+        return this._athlete.activities()
+    }
+
+    activity(activityId) {
+        return this._athlete.activity(activityId)
+    }
+
     segments() {
         return this._athlete.segments()
     }
