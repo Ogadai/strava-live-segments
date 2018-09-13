@@ -29,7 +29,7 @@ class Athlete {
 
     activities() {
         return cache.get({
-            key: `activities-${this.token}`,
+            key: `activities-${this.config.key}`,
             createFn: () => request.get(this.token, '/api/v3/athlete/activities?per_page=100')
                         .then(activities => activities.filter(a => this.filterActivity(a)))
         })
