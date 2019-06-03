@@ -94,7 +94,7 @@ class Athlete {
         const distance = (p1, p2) => {
             return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2))
         }
-        if (activity.type === `VirtualRide`) {
+        if (activity.type === `VirtualRide` && activity.start_latlng) {
             const start = this.mapLatLng(activity.start_latlng)
             if (distance(start, { x: 0, y: 0 }) < 10000000) {
                 return true;
